@@ -13,6 +13,9 @@ import {
   FormLabel,
   FormControl,
 } from '../ui/form'
+import { signUp } from '@/apis/auth.api'
+import { toast } from 'sonner'
+import { useMutation } from '@tanstack/react-query'
 
 const formSchema = z.object({
   username: z
@@ -38,8 +41,19 @@ type FormData = z.infer<typeof formSchema>
 export const SignUpForm = () => {
   const form = useForm<FormData>({ resolver: zodResolver(formSchema) })
 
-  const onSubmit = (data: FormData) => {
-    console.log(data)
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: signUp,
+    onSuccess: () => {
+      toast.success('Sign up successfully')
+      window.location.href = '/auth/sign-in'
+    },
+    onError: (error) => {
+      toast.error((error as Error).message)
+    },
+  })
+
+  const onSubmit = async (data: FormData) => {
+    mutateAsync(data)
   }
 
   return (
@@ -95,11 +109,9 @@ export const SignUpForm = () => {
           )}
         />
 
-        <div className='flex justify-center'>
-          <Button type='submit' className='w-full mt-2'>
-            Sign Up
-          </Button>
-        </div>
+        <Button type='submit' className='w-full mt-2' disabled={isLoading}>
+          {isLoading ? 'Signing up...' : 'Sign Up'}
+        </Button>
 
         <p className='text-sm text-center'>
           Already have an account?
