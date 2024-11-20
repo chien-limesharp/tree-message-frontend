@@ -33,7 +33,6 @@ export default async function RootLayout({
       >
         <AppProvider>
           <div className='w-full h-full container mx-auto'>
-            <Header />
             {children}
           </div>
         </AppProvider>
