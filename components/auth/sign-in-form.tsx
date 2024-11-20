@@ -16,12 +16,11 @@ import {
 } from '../ui/form'
 import { Checkbox } from '../ui/checkbox'
 import { Label } from '../ui/label'
-// import { signIn } from '@/apis/auth.api'
 import { toast } from 'sonner'
-import { signIn } from 'next-auth/react'
+import { useAuthContext } from '@/hooks/useAuthContext'
 
 const formSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  usernameOrEmail: z.string().min(1, 'Username or email is required'),
   password: z.string().min(1, 'Password is required'),
   rememberMe: z.boolean().optional(),
 })
@@ -31,19 +30,16 @@ type FormData = z.infer<typeof formSchema>
 export const SignInForm = () => {
   const form = useForm<FormData>({ resolver: zodResolver(formSchema) })
 
-  const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (data: FormData) =>
-      signIn('credentials', {
-        username: data.username,
-        password: data.password,
-        rememberMe: data.rememberMe,
-      }),
+  const { login } = useAuthContext()
+
+  const { mutateAsync, isLoading } = useMutation<void, Error, FormData>({
+    mutationFn: (data: FormData) => login(data),
     onSuccess: () => {
       toast.success('Sign in successfully')
       window.location.href = '/'
     },
-    onError: (error) => {
-      toast.error((error as Error).message)
+    onError: (error: Error) => {
+      toast.error(error.message)
     },
   })
 
@@ -55,16 +51,16 @@ export const SignInForm = () => {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
         <FormField
-          name='username'
+          name='usernameOrEmail'
           control={form.control}
           render={() => (
             <FormItem>
-              <FormLabel htmlFor='username'>Username</FormLabel>
+              <FormLabel htmlFor='usernameOrEmail'>Username or Email</FormLabel>
               <FormControl>
                 <Input
                   type='text'
-                  id='username'
-                  {...form.register('username')}
+                  id='usernameOrEmail'
+                  {...form.register('usernameOrEmail')}
                 />
               </FormControl>
               <FormMessage />

@@ -1,15 +1,19 @@
-import axios, { AxiosError, isAxiosError } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig, isAxiosError } from 'axios'
 
 interface ErrorResponse {
   message?: string
 }
 
-export const createApiClient = (rootUrl: string) => {
+export const createApiClient = (
+  rootUrl: string,
+  options?: AxiosRequestConfig,
+) => {
   const apiClient = axios.create({
-    baseURL: rootUrl, // Set the dynamic base URL
+    baseURL: rootUrl,
     headers: {
       'Content-Type': 'application/json',
     },
+    ...options,
   })
 
   apiClient.interceptors.request.use(
