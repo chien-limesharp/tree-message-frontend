@@ -4,8 +4,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
-  CardTitle,
 } from '../ui/card'
 import { Message } from '@/lib/type'
 import dayjs from 'dayjs'
@@ -27,16 +25,13 @@ export const MessageCard: React.FC<MessageCardProps> = ({
 
   return (
     <Card className='shadow-sm'>
-      <CardHeader className='p-4'>
-        <CardTitle>{message.user?.username ?? 'Anonymous'}</CardTitle>
-      </CardHeader>
-      <CardContent className='pb-3 px-4'>
+      <CardContent className='pt-6'>
         {message.content}
 
         {isCommentsOpen && (
           <div className='space-y-4 mt-4'>
             {message.children.map((child) => (
-              <MessageCard 
+              <MessageCard
                 key={child.id}
                 message={child}
                 onReply={handleReply}
@@ -46,10 +41,15 @@ export const MessageCard: React.FC<MessageCardProps> = ({
         )}
       </CardContent>
       <CardFooter className='px-4 pb-4 flex items-center gap-4'>
+        <p className='text-sm'>{message.user?.username ?? ''}</p>
+        <p className='text-sm text-gray-500'>
+          {dayjs(message.createdAt).format('DD/MM/YYYY HH:mm')}
+        </p>
+        <div>|</div>
         <p className='text-sm text-gray-500'>
           {message.children?.length ?? 0} comments
         </p>
-        {message.children?.length && (
+        {message.children?.length ? (
           <Button
             variant='link'
             size='sm'
@@ -57,10 +57,8 @@ export const MessageCard: React.FC<MessageCardProps> = ({
           >
             {isCommentsOpen ? 'Hide All' : 'View All'}
           </Button>
-        )}
-        <p className='text-sm text-gray-500 flex-grow'>
-          {dayjs(message.createdAt).format('DD/MM/YYYY HH:mm')}
-        </p>
+        ) : null}
+        <div className='flex-grow'></div>
         <Button size='sm' onClick={() => handleReply(message.id)}>
           Reply
         </Button>

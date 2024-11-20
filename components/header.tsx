@@ -15,11 +15,16 @@ export const Header = () => {
         <Loader2 className='animate-spin' />
       ) : user ? (
         <>
-          <div className='flex items-center gap-x-3 border-r pr-5'>
+          <div className='flex flex-col items-end gap-x-3 border-r pr-5'>
             <div className='text-sm'>
               <p className='font-medium'>{user?.username}</p>
             </div>
+
+            <div className='text-gray-500 text-xs'>
+              <p className='font-medium'>{user?.email}</p>
+            </div>
           </div>
+
 
           <Separator orientation='vertical' />
 
